@@ -18,7 +18,7 @@ joined as (
 
         case
             when discounts.discount_type = 'percent'
-                then amount * (1.0 - discounts.discount_value::float / 100)
+                then amount * (1.0 - cast(discounts.discount_value as numeric) / 100)
             else amount - discounts.discount_value
         end as discounted_amount
 

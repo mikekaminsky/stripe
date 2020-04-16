@@ -14,14 +14,14 @@ final as (
 
     select
 
-        'proration item'::varchar as source_item_type,
+        cast('proration item' as string) as source_item_type,
         items.id as source_item_id,
         items.subscription_id,
         items.customer_id,
         items.invoice_date,
         case
             when invoices.subscription_id is null
-            and datediff(month, items.period_start, items.period_end) <= 1
+            and {{ dbt_utils.datediff("items.period_start", "items.period_end", 'month') }}
                 then items.period_end
             else items.period_start
         end as period_start,
@@ -31,7 +31,7 @@ final as (
         invoices.forgiven,
         invoices.paid,
         case
-            when datediff(month, items.period_start, items.period_end) > 1
+            when  {{ dbt_utils.datediff("items.period_start", "items.period_end", 'month') }} > 1
                 then 'year'
             else 'month'
         end as duration

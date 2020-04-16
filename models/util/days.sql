@@ -1,14 +1,23 @@
-with events as (
+with
 
-  select * from {{ref('stripe_events')}}
+events as ( select * from {{ref('stripe_events')}})
 
-), all_the_days as (
-
-  select (min(created) over () + row_number() over ())::date as date_day
-  from events
-
+, start_day AS (
+  SELECT MIN(DATE(created)) AS first_date
+  FROM events
 )
 
-select *
-from all_the_days
-where date_day <= convert_timezone('{{ var('timezone') }}', current_date)
+, spline AS (
+  {{ dbt_utils.date_spine(
+      start_date="DATETIME('2008-01-01')",
+      datepart="day",
+      end_date="DATETIME(CURRENT_DATE)"
+     )
+  }}
+)
+
+SELECT
+  DATE(spline.date_day) AS date_day
+FROM spline
+CROSS JOIN start_day
+WHERE DATE(date_day) >= first_date

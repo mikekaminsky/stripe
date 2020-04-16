@@ -60,7 +60,7 @@ final as (
 
         case
             when plan_interval = 'month' then amount
-            when plan_interval = 'year' then amount::float / 12
+            when plan_interval = 'year' then CAST(amount AS numeric) / 12
         end as plan_mrr_amount
 
     from core

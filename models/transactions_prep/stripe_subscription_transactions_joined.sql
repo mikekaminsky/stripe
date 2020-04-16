@@ -33,7 +33,7 @@ joined as (
 
     select
 
-        'subscription payment'::varchar as source_item_type,
+        CAST('subscription payment' AS string) as source_item_type,
         invoices.id as source_item_id,
         invoices.subscription_id,
         invoices.customer_id,
@@ -47,7 +47,7 @@ joined as (
         case
             when plan_interval is not null
                 then plan_interval
-            when datediff(month, invoices.period_start, invoices.period_end) > 1
+            when {{ dbt_utils.datediff("invoices.period_start", "invoices.period_end", 'month') }}
                 then 'year'
             else 'month'
         end as duration

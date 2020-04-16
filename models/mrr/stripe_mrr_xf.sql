@@ -14,7 +14,7 @@ joined as (
 
     select
 
-        md5(date_month::varchar || customer_id) as id,
+        md5(cast(date_month as character) || customer_id) as id,
         date_month,
         customer_id,
         rev_rec_date,
@@ -26,7 +26,7 @@ joined as (
         coalesce(accrual_amount, 0) as accrual_amount,
         coalesce(addon_amount, 0) as addon_amount,
         coalesce(plans.name, 'unknown') as plan_name,
-        plan_mrr_amount::float / 100 as plan_mrr_amount,
+        cast(plan_mrr_amount AS numeric) / 100 as plan_mrr_amount,
         plans.plan_interval
 
     from mrr

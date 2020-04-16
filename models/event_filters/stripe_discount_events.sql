@@ -8,26 +8,26 @@ final as (
 
     select
 
-        data__object__id as id,
+        {{ nested_field('data', ['object', 'id']) }} as id,
         created as created_at,
-        "type" as event_type,
-        data__object__customer as customer_id,
-        data__object__coupon__id as coupon_id,
+        type as event_type,
+        {{ nested_field('data', ['object', 'customer']) }} as customer_id,
+        {{ nested_field('data', ['object', 'coupon', 'id']) }} as coupon_id,
 
         case
-            when data__object__coupon__percent_off is null then 'amount'
+            when {{ nested_field('data', ['object', 'coupon', 'percent_off']) }} is null then 'amount'
             else 'percent'
         end as discount_type,
 
-        coalesce(data__object__coupon__percent_off,
-                data__object__coupon__amount_off) as discount_value,
+        coalesce({{ nested_field('data', ['object', 'coupon', 'percent_off']) }},
+                {{ nested_field('data', ['object', 'coupon', 'amount_off']) }}) as discount_value,
 
-        data__object__start as discount_start,
-        data__object__end as discount_end
+        {{ nested_field('data', ['object', 'start']) }} as discount_start,
+        {{ nested_field('data', ['object', 'end']) }} as discount_end
 
     from events
 
-    where "type" like 'customer.discount.%'
+    where type like 'customer.discount.%'
 
 )
 

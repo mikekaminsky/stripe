@@ -6,27 +6,27 @@ with events as (
 
 select
 
-    data__object__id as id,
-    nullif(data__object__invoice, '') as invoice_id,
-    nullif(data__object__customer, '') as customer_id,
-    nullif(data__object__subscription, '') as subscription_id,
+    {{ nested_field('data', ['object', 'id']) }} as id,
+    nullif({{ nested_field('data', ['object', 'invoice']) }}, '') as invoice_id,
+    nullif({{ nested_field('data', ['object', 'customer']) }}, '') as customer_id,
+    nullif({{ nested_field('data', ['object', 'subscription']) }}, '') as subscription_id,
     nullif(id, '') as event_id,
 
-    "type" as event_type,
+    type as event_type,
 
-    data__object__date as invoice_date,
-    data__object__period__start as period_start,
-    data__object__period__end as period_end,
+    {{ nested_field('data', ['object', 'date']) }} as invoice_date,
+    {{ nested_field('data', ['object', 'period', 'start']) }} as period_start,
+    {{ nested_field('data', ['object', 'period', 'end']) }} as period_end,
 
-    data__object__proration as proration,
-    data__object__plan__id as plan_id,
+    {{ nested_field('data', ['object', 'proration']) }} as proration,
+    {{ nested_field('data', ['object', 'plan', 'id']) }} as plan_id,
 
-    data__object__amount as amount,
-    data__object__currency as currency,
+    {{ nested_field('data', ['object', 'amount']) }} as amount,
+    {{ nested_field('data', ['object', 'currency']) }} as currency,
 
-    data__object__description as description,
+    {{ nested_field('data', ['object', 'description']) }} as description,
 
     created as created_at
 
 from events
-where "type" like 'invoiceitem.%'
+where type like 'invoiceitem.%'

@@ -8,29 +8,29 @@ final as (
 
     select
 
-        data__object__id as id,
+        {{ nested_field('data', ['object', 'id']) }} as id,
         id as event_id,
-        data__object__customer as customer_id,
+        {{ nested_field('data', ['object', 'customer']) }} as customer_id,
 
         created as created_at,
 
-        data__object__status as status,
-        "type" as event_type,
+        {{ nested_field('data', ['object', 'status']) }} as status,
+        type as event_type,
 
-        data__object__start as start,
-        data__object__current_period_start as period_start,
-        data__object__current_period_end as period_end,
-        data__object__canceled_at as canceled_at,
+        {{ nested_field('data', ['object', 'start']) }} as start,
+        {{ nested_field('data', ['object', 'current_period_start']) }} as period_start,
+        {{ nested_field('data', ['object', 'current_period_end']) }} as period_end,
+        {{ nested_field('data', ['object', 'canceled_at']) }} as canceled_at,
 
-        data__object__quantity as quantity,
+        {{ nested_field('data', ['object', 'quantity']) }} as quantity,
 
-        data__object__plan__id as plan_id,
-        data__object__plan__interval as plan_interval,
-        data__object__plan__amount as plan_amount
+        {{ nested_field('data', ['object', 'plan', 'id']) }} as plan_id,
+        {{ nested_field('data', ['object', 'plan', 'interval']) }} as plan_interval,
+        {{ nested_field('data', ['object', 'plan', 'amount']) }} as plan_amount
 
     from events
 
-    where "type" like 'customer.subscription.%'
+    where type like 'customer.subscription.%'
 
 )
 
