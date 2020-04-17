@@ -21,7 +21,7 @@ final as (
         items.invoice_date,
         case
             when invoices.subscription_id is null
-            and {{ dbt_utils.datediff("items.period_start", "items.period_end", 'month') }}
+            and {{ dbt_utils.datediff("items.period_start", "items.period_end", 'month') }} <= 1
                 then items.period_end
             else items.period_start
         end as period_start,

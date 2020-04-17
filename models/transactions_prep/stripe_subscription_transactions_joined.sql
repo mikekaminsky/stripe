@@ -47,7 +47,7 @@ joined as (
         case
             when plan_interval is not null
                 then plan_interval
-            when {{ dbt_utils.datediff("invoices.period_start", "invoices.period_end", 'month') }}
+            when {{ dbt_utils.datediff("invoices.period_start", "invoices.period_end", 'month') }} > 1
                 then 'year'
             else 'month'
         end as duration

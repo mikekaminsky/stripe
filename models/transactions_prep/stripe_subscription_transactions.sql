@@ -19,17 +19,17 @@ final as (
             when duration = 'year'
                 then period_end
 
-            when max_period_start <= date_part(day, period_end) then period_end
+            when max_period_start <= extract(day from period_end) then period_end
 
             else
 
                 least(
 
-                    to_date((
-                        date_part(month, period_end)::varchar || '/' ||
-                        date_part(day, last_day(period_end))::varchar || '/' ||
-                        date_part(year, period_end)::varchar
-                    ), 'mm/dd/yyyy'),
+                    timestamp(date(
+                        extract(year from period_end),
+                        extract(month from period_end),
+                        extract(day from {{ dbt_utils.last_day('period_end', 'month') }})
+                    )),
 
                     following_period_start
 

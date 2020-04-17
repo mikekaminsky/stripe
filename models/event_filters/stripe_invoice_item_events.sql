@@ -14,9 +14,9 @@ select
 
     type as event_type,
 
-    {{ nested_field('data', ['object', 'date']) }} as invoice_date,
-    {{ nested_field('data', ['object', 'period', 'start']) }} as period_start,
-    {{ nested_field('data', ['object', 'period', 'end']) }} as period_end,
+    timestamp_seconds({{ nested_field('data', ['object', 'date']) }}) as invoice_date,
+    timestamp_seconds({{ nested_field('data', ['object', 'period', 'start']) }}) as period_start,
+    timestamp_seconds({{ nested_field('data', ['object', 'period', 'end']) }}) as period_end,
 
     {{ nested_field('data', ['object', 'proration']) }} as proration,
     {{ nested_field('data', ['object', 'plan', 'id']) }} as plan_id,

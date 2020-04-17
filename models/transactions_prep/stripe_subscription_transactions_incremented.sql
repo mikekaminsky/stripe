@@ -19,13 +19,14 @@ incremented as (
         invoice_date,
 
         case
-            when period_end - period_start = 0 then period_start
+            when period_end = period_start then period_start
             else period_end
         end as period_start,
 
         case
-            when duration = 'month' then dateadd(month, 1, period_end)
-            when duration = 'year' then dateadd(year, 1, period_end)
+
+            when duration = 'month' then timestamp({{ dbt_utils.dateadd(datepart='month', interval=1, from_date_or_timestamp='period_end') }})
+            when duration = 'year' then timestamp({{ dbt_utils.dateadd(datepart='year', interval=1, from_date_or_timestamp='period_end') }})
         end as period_end,
 
         amount,
@@ -52,7 +53,7 @@ final as (
 
         *,
 
-        max(date_part(day, period_start)) over (
+        max(extract(day from period_start)) over (
             partition by subscription_id
             ) as max_period_start,
 

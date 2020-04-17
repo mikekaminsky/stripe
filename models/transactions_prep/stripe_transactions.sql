@@ -20,8 +20,7 @@ with unioned as (
 final as (
 
     select
-
-        date_trunc('month', transaction_date)::date as date_month,
+        date({{ dbt_utils.date_trunc('month', 'transaction_date') }}) as date_month,
         source_item_type,
         source_item_id,
         subscription_id,
@@ -30,7 +29,7 @@ final as (
         invoice_date,
         period_start,
         period_end,
-        amount::float / 100 as amount,
+        CAST(amount AS numeric) / 100 as amount,
         plan_id,
         forgiven,
         paid,

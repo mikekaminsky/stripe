@@ -18,8 +18,8 @@ final as (
         type as event_type,
 
         {{ nested_field('data', ['object', 'start']) }} as start,
-        {{ nested_field('data', ['object', 'current_period_start']) }} as period_start,
-        {{ nested_field('data', ['object', 'current_period_end']) }} as period_end,
+        timestamp_seconds({{ nested_field('data', ['object', 'current_period_start']) }}) as period_start,
+        timestamp_seconds({{ nested_field('data', ['object', 'current_period_end']) }}) as period_end,
         {{ nested_field('data', ['object', 'canceled_at']) }} as canceled_at,
 
         {{ nested_field('data', ['object', 'quantity']) }} as quantity,

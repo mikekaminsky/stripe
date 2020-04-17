@@ -76,14 +76,11 @@ final as (
         --this is to fill in the revenue recognition date for rows that have no invoices
         case
             when rev_rec_date is not null then rev_rec_date
-            else dateadd(
-                month,
-                datediff(
-                    month,
-                    date_trunc('month', last_good_rev_rec_date),
-                    date_month
-                ),
-                last_good_rev_rec_date)
+
+            else timestamp({{ dbt_utils.dateadd(
+                'month',
+                dbt_utils.datediff(
+                  dbt_utils.date_trunc('month', 'last_good_rev_rec_date'), "date_month", 'month'), 'last_good_rev_rec_date') }})
         end as rev_rec_date,
 
         plan_id,

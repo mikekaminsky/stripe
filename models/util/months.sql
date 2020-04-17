@@ -5,7 +5,7 @@ with dates as (
 ), final as (
 
     select distinct
-        {{ dbt_utils.date_trunc('month', 'date_day') }} as date_month
+        date({{ dbt_utils.date_trunc('month', 'date_day') }}) as date_month
     from dates
 
 )

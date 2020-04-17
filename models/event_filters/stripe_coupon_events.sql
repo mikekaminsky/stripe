@@ -5,6 +5,7 @@ with events as (
 )
 
 select
+  -- TODO: Deal with Epoch time
   created as created_at,
   {{ nested_field('data', ['object', 'currency']) }} as currency,
   {{ nested_field('data', ['object', 'id']) }} as id,

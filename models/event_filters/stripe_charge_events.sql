@@ -12,6 +12,6 @@ select
   {{ nested_field('data', ['object', 'balance_transaction']) }} as balance_transaction_id,
   {{ nested_field('data', ['object', 'amount']) }} as amount,
   replace(type, 'charge.', '') as result,
-  {{ nested_field('data', ['object', 'created']) }} as created_at
+  timestamp_seconds({{ nested_field('data', ['object', 'created']) }}) as created_at
 from charges
 where type like 'charge.%'

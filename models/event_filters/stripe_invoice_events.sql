@@ -14,9 +14,9 @@ select
 
     type as event_type,
 
-    {{ nested_field('data', ['object', 'date']) }} as invoice_date,
-    {{ nested_field('data', ['object', 'period_end']) }} as period_end,
-    {{ nested_field('data', ['object', 'period_start']) }} as period_start,
+    timestamp_seconds({{ nested_field('data', ['object', 'date']) }}) as invoice_date,
+    timestamp_seconds({{ nested_field('data', ['object', 'period_end']) }}) as period_end,
+    timestamp_seconds({{ nested_field('data', ['object', 'period_start']) }}) as period_start,
 
     {{ nested_field('data', ['object', 'currency']) }} as currency,
     {{ nested_field('data', ['object', 'attempt_count']) }} as attempt_count,

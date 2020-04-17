@@ -17,7 +17,7 @@ with transactions as (
 
 ),
 
-rollup as (
+rollup_tbl as (
 
     select distinct
 
@@ -42,4 +42,4 @@ rollup as (
 
 )
 
-select * from rollup
+select * from rollup_tbl

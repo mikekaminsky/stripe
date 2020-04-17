@@ -1,4 +1,10 @@
-with mrr as (
+{{ config(
+  materialized = "table",
+  dist = "id",
+  sort = "date_month"
+) }}
+
+with stripe_mrr_filled as (
 
     select * from {{ref('stripe_mrr_filled')}}
 
@@ -14,7 +20,7 @@ joined as (
 
     select
 
-        md5(cast(date_month as character) || customer_id) as id,
+        md5(cast(date_month as string) || customer_id) as id,
         date_month,
         customer_id,
         rev_rec_date,
@@ -29,9 +35,9 @@ joined as (
         cast(plan_mrr_amount AS numeric) / 100 as plan_mrr_amount,
         plans.plan_interval
 
-    from mrr
+    from stripe_mrr_filled
 
-    left outer join plans on mrr.plan_id = plans.id
+    left outer join plans on stripe_mrr_filled.plan_id = plans.id
 
 ),
 
@@ -59,7 +65,7 @@ final as (
                 order by date_month
                 rows between unbounded preceding and unbounded following
             ) = date_month
-            and period_end < current_date
+            and DATE(period_end) < current_date
             then 1
         else 0
         end as last_month

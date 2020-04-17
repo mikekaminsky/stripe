@@ -24,30 +24,29 @@ amortized as (
 
         transactions.*,
 
-        dateadd(
-            day,
-            datediff(day, date_trunc('day', transactions.period_start),
-            date_day),
-            invoice_date
-        ) as transaction_date
+        TIMESTAMP({{ dbt_utils.dateadd(
+            'day', dbt_utils.datediff(
+              dbt_utils.date_trunc('day', 'transactions.period_start'),
+            "date_day", 'day'),
+          'invoice_date') }}) as transaction_date
 
     from transactions
 
     inner join days
-        on date_trunc('day', transactions.period_start) <= days.date_day
-        and date_trunc('day', transactions.period_end) > days.date_day
+
+        on date({{ dbt_utils.date_trunc('day', 'transactions.period_start') }}) <= days.date_day
+        and date({{ dbt_utils.date_trunc('day', 'transactions.period_end') }}) > days.date_day
 
 ),
 
-month_days as (
+month_days_tbl as (
 
     select
         *,
-        split_part(last_day(date_trunc('month', transaction_date)), '-', 3)::float
-            as month_days,
-        split_part(transaction_date::date, '-', 3) as transaction_day,
-        split_part(invoice_date::date, '-', 3) as invoice_day,
-        date_trunc('month', transaction_date)::date as date_month
+        extract(day from {{ dbt_utils.last_day('transaction_date', 'month') }}) as month_days,
+        extract(day from transaction_date) as transaction_day,
+        extract(day from invoice_date) as invoice_day,
+        {{ dbt_utils.date_trunc('month', 'transaction_date') }} as date_month
     from amortized
 
 ),
@@ -84,7 +83,7 @@ calculated as (
                 then 1
             else null
         end as last_month
-    from month_days
+    from month_days_tbl
 
 ),
 

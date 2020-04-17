@@ -1,3 +1,9 @@
+{{ config(
+  materialized = "table",
+  dist = "id",
+  sort = "date_month"
+) }}
+
 with mrr as (
 
     select * from {{ref('stripe_mrr_xf')}}
@@ -7,23 +13,22 @@ with mrr as (
 thin_air as (
 
     select
-
-        dateadd(month, 1, date_month)::date as date_month,
+        date({{ dbt_utils.dateadd('MONTH', 1,'date_month') }}) as date_month,
         customer_id,
-        dateadd(month, 1, rev_rec_date) as rev_rec_date,
+        TIMESTAMP({{ dbt_utils.dateadd('MONTH', 1,'rev_rec_date') }}) as rev_rec_date,
         plan_id,
-        null::timestamp as period_start,
-        null::timestamp as period_end,
-        0::float as mrr,
-        0::float as subscription_amount,
-        0::float as accrual_amount,
-        0::float as addon_amount,
+        CAST(null AS timestamp) as period_start,
+        CAST(null AS timestamp) as period_end,
+        0 as mrr,
+        0 as subscription_amount,
+        0 as accrual_amount,
+        0 as addon_amount,
         plan_name,
         plan_mrr_amount,
         plan_interval,
-        0::int as active_customer,
-        0::int as first_month,
-        0::int as last_month
+        0 as active_customer,
+        0 as first_month,
+        0 as last_month
 
 
     from mrr
@@ -36,7 +41,7 @@ final as (
 
     select
 
-        md5(date_month::varchar || customer_id) as id,
+        md5(CAST(date_month AS string) || customer_id) as id,
         *
 
     from thin_air

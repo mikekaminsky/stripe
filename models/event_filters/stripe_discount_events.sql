@@ -22,8 +22,8 @@ final as (
         coalesce({{ nested_field('data', ['object', 'coupon', 'percent_off']) }},
                 {{ nested_field('data', ['object', 'coupon', 'amount_off']) }}) as discount_value,
 
-        {{ nested_field('data', ['object', 'start']) }} as discount_start,
-        {{ nested_field('data', ['object', 'end']) }} as discount_end
+        timestamp_seconds({{ nested_field('data', ['object', 'start']) }}) as discount_start,
+        timestamp_seconds({{ nested_field('data', ['object', 'end']) }}) as discount_end
 
     from events
 

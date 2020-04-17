@@ -6,7 +6,7 @@
     )
 }}
 
-with mrr as (
+with stripe_mrr_unioned as (
 
     select * from {{ref('stripe_mrr_unioned')}}
 
@@ -28,7 +28,7 @@ mrr_with_changes as (
             0
             ) as mrr_change
 
-    from mrr
+    from stripe_mrr_unioned
 
 ),
 

@@ -38,7 +38,7 @@ metrics as (
 
         sum(case
             when source_item_type in ('subscription payment', 'proration item')
-                and date_trunc('month', period_start) = date_month
+                and DATE({{ dbt_utils.date_trunc('month', 'period_start') }}) = date_month
                 then amount
             end)
             over ( {{ window_clause}} )
@@ -46,7 +46,7 @@ metrics as (
 
         sum(case
             when source_item_type in ('subscription payment', 'proration item')
-                and date_trunc('month', period_start) != date_month
+                and date({{ dbt_utils.date_trunc('month', 'period_start') }}) != date_month
                 then amount
             end)
             over ( {{ window_clause}} )
